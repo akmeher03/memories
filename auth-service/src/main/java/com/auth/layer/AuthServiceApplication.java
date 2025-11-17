@@ -8,6 +8,6 @@ public class AuthServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AuthServiceApplication.class, args);
-        System.out.println("\n MIRACLE MIRACLE!! Application Started Running .............. ");
+        System.out.println("\n YO YO boys!! The Game is on  .............. ");
 	}
 }

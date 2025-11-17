@@ -1,8 +1,10 @@
 package com.auth.layer.security;
 import com.auth.layer.entity.User;
+import com.auth.layer.utils.JwtConfigurationProperties;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 // import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -10,19 +12,17 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
 
-    private final String jwtSecret = "38eabc5f6eb0a20b85d7b567ae6f0fc38aca0e4e3e2056df3a3abc3e2a52fea6cf68728a5dc7baf35b1a1c803e552ad81da32efab85029bbeefd760a7f4ab9e8";
-    // private final SecretKey jwtSecret = Keys.hmacShaKeyFor("38eabc5f6eb0a20b85d7b567ae6f0fc38aca0e4e3e2056df3a3abc3e2a52fea6cf68728a5dc7baf35b1a1c803e552ad81da32efab85029bbeefd760a7f4ab9e8".getBytes());
-
-    private final long jwtExpirationMs = 15 * 60 * 1000; // 15 minutes
+    private final JwtConfigurationProperties jwtConfigurationProperties;
 
     public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfigurationProperties.getTokenExpirationInMs()))
+                .signWith(SignatureAlgorithm.HS256, jwtConfigurationProperties.getJwtSecretKey())
                 // .signWith(jwtSecret)
                 .compact();
     }
@@ -30,7 +30,7 @@ public class JwtProvider {
     public String getEmailFromToken(String token) {
         return Jwts.parser()
         // Jwts.parserBuilder()
-                .setSigningKey(jwtSecret)
+                .setSigningKey(jwtConfigurationProperties.getJwtSecretKey())
                 // .build()
                 .parseClaimsJws(token)
                 .getBody()
@@ -39,7 +39,7 @@ public class JwtProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(jwtConfigurationProperties.getJwtSecretKey()).parseClaimsJws(token);
             // Jwts.parserBuilder()
             //         .setSigningKey(jwtSecret)
             //         .build()

@@ -10,6 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth.layer.entity.User;
 import com.auth.layer.repository.UserRepository;
+import com.auth.layer.utils.JwtConfigurationProperties;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
@@ -24,6 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+    private final JwtConfigurationProperties jwtConfigurationProperties;
 
     @PostConstruct
     public void init() {
@@ -33,11 +35,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        // Skip JWT filter for public endpoints
-        return path.startsWith("/auth/") ||
-               path.startsWith("/swagger-ui") ||
-               path.startsWith("/v3/api-docs") ||
-               path.equals("/swagger-ui.html");
+        String skipPaths = jwtConfigurationProperties.getFilterSkipUrls();
+
+        // Split the skip paths and check if current path matches any
+        if (skipPaths != null && !skipPaths.isEmpty()) {
+            for (String skipPath : skipPaths.split(",")) {
+                if (path.startsWith(skipPath.trim())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
