@@ -2,15 +2,17 @@ package com.auth.layer.controller;
 
 import java.util.UUID;
 
-import com.auth.layer.DTOs.mapper.UserMapper;
+import com.auth.layer.DTOs.request.UpdateUserRequest;
 import com.auth.layer.DTOs.response.ApiResponse;
 import com.auth.layer.DTOs.response.UserResponse;
-import com.auth.layer.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieves user information by user ID")
@@ -50,6 +51,16 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
         log.info("Fetching current authenticated user");
         UserResponse userResponse = userService.getCurrentUser();
+        return ResponseEntity.ok(ApiResponse.success(userResponse));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update user by ID", description = "Updates user details (firstName, lastName, email, password) by user ID. All fields are optional.")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+        log.info("Updating user with ID: {}", id);
+        UserResponse userResponse = userService.updateUser(id, updateUserRequest);
         return ResponseEntity.ok(ApiResponse.success(userResponse));
     }
 }

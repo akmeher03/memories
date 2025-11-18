@@ -39,6 +39,20 @@ public class SecurityConfig {
                 // Make session stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                // Security Headers
+                .headers(headers -> headers
+                        // Prevent clickjacking attacks
+                        .frameOptions(frame -> frame.deny())
+                        // Prevent MIME type sniffing
+                        .contentTypeOptions(content -> content.disable())
+                        // Enable XSS protection
+                        .xssProtection(xss -> xss.disable()) // Modern browsers handle this
+                        // Enforce HTTPS (Strict-Transport-Security)
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000)) // 1 year
+                )
+
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**",
