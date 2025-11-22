@@ -36,7 +36,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5174", "http://127.0.0.1:5174", "http://ui-service:80","https://ui-service:80")); // adjust as needed
+        config.setAllowedOrigins(List.of("http://localhost:5174", "http://127.0.0.1:5174", "https://memories-ui-service.onrender.com","")); // adjust as needed
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
