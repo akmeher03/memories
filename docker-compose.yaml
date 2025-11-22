@@ -5,12 +5,13 @@ services:
   frontend:
     build:
       context: ./ui-service           # Path to your frontend directory (where Dockerfile is located)
+      args:
+        # Pass backend URL as build argument (embedded at build time)
+        VITE_BACKEND_URL: http://localhost:8080
     image: ui-service:latest    # Image name (optional, Docker will build it if not present)
     container_name: ui-service-container 
     ports:
       - "5173:80"                     # Expose frontend service on port 80 (to be accessed publicly)
-    environment:
-      - REACT_APP_BACKEND_URL=http://backend:8080  # Set the backend URL (internal communication in Docker network)
     networks:
       - app-network
   

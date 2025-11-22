@@ -3,10 +3,16 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
+# Accept build-time argument for backend URL
+ARG VITE_BACKEND_URL=http://localhost:8080
+# Make it available as environment variable during build
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+
 COPY package*.json ./
 RUN npm install
 
 COPY . .
+# Vite will use VITE_BACKEND_URL during build
 RUN npm run build
 
 
