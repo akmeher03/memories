@@ -6,11 +6,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 // import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 // import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtProvider {
@@ -46,6 +48,7 @@ public class JwtProvider {
             //         .parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
+            log.info("JWT token Expired or invalid ----> {}", e.getMessage());
             return false;
         }
     }
