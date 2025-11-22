@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  # Frontend Service (React/Vite)
+  frontend:
+    build:
+      context: ./ui-service           # Path to your frontend directory (where Dockerfile is located)
+    image: ui-service:latest    # Image name (optional, Docker will build it if not present)
+    container_name: ui-service-container 
+    ports:
+      - "5173:80"                     # Expose frontend service on port 80 (to be accessed publicly)
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:8080  # Set the backend URL (internal communication in Docker network)
+    networks:
+      - app-network
+  
+  # Backend Service (Spring Boot)
+  backend:
+    build:
+      context: ./auth-service            # Path to your backend directory (where Dockerfile is located)
+    image: auth-service:latest  # Image name (optional)
+    container_name: auth-service-container
+    ports:
+      - "8080:8080"                 # Expose backend service on port 8080 (to be accessed from frontend)
+    environment:
+      - DATABASE_URL=jdbc:postgresql://database:5432/authdb  # DB URL pointing to the db service
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+    depends_on:
+      database:
+        condition: service_healthy    # Wait for DB to be actually ready
+    networks:
+      - app-network
+
+  # Database Service (PostgreSQL)
+  database:
+    image: postgres:16-alpine       # Use stable PostgreSQL 16 instead of latest (18+)
+    container_name: database-container
+    environment:
+      - POSTGRES_DB=authdb          # Create a database named 'authdb'
+      - POSTGRES_USER=postgres      # DB user
+      - POSTGRES_PASSWORD=postgres  # DB user password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data   # Persist data between restarts
+    # Uncomment the following line only if you need external access to the database
+    # ports:
+    #   - "5432:5432"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# Named volume for PostgreSQL data persistence
+volumes:
+  postgres-data:
+
+# Define the network for communication between services
+networks:
+  app-network:
+    driver: bridge
