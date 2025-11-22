@@ -1,20 +1,25 @@
-import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import SignUp from './pages/SignUp'
+import SignIn from './pages/SignIn'
+import Profile from './pages/Profile'
+import Writings from './pages/Writings'
+import Memories from './pages/Memories'
+import Welcome from './pages/Welcome'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <h1>Hello, brother!</h1>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/writings" element={<Writings />} />
+        <Route path="/memories" element={<Memories />} />
+      </Routes>
+    </Router>
   )
 }
 

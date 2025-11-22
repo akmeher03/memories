@@ -1,0 +1,32 @@
+# Ignore build artifacts
+build/
+target/
+.gradle/
+*.log
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Ignore git files
+.git/
+.gitignore
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Ignore test resources
+src/test/
+
+# Ignore gradle wrapper jar (we'll use the gradle image's gradle)
+!gradle/wrapper/gradle-wrapper.properties
+
