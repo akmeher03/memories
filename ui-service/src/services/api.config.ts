@@ -7,7 +7,7 @@ import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestCo
 // It handles authentication, token refresh, and error handling automatically
 
 // API Configuration - Base URL and timeout settings
-const API_BASE_URL = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:8080' // Backend server URL
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080' // Backend server URL
 const API_TIMEOUT = 30000 // 30 seconds - How long to wait for a response before timing out
 
 // ============================================
