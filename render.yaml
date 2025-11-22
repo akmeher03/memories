@@ -1,0 +1,60 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: memories-db
+    plan: free
+    ipAllowList: []
+    databaseName: authdb
+    databaseUser: postgres
+
+  # Backend Service (Spring Boot)
+  - type: web
+    name: memories-backend
+    runtime: docker
+    region: oregon # Change to your preferred region
+    plan: free
+    rootDir: auth-service
+    dockerfilePath: auth-service/Dockerfile
+    dockerContext: auth-service
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: memories-db
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: memories-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: memories-db
+          property: password
+      - key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+        value: org.postgresql.Driver
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: SPRING_JPA_SHOW_SQL
+        value: false
+      - key: JWT_SECRET_KEY
+        generateValue: true # Render will generate a secure random value
+      - key: JWT_TOKEN_EXPIRATION_MS
+        value: 3600000 # 1 hour in production
+      - key: JWT_REFRESH_TOKEN_EXPIRATION_SECONDS
+        value: 604800 # 7 days
+    healthCheckPath: /actuator/health
+
+  # Frontend Service (React/Vite)
+  - type: web
+    name: memories-frontend
+    runtime: docker
+    region: oregon # Change to your preferred region
+    plan: free
+    rootDir: ui-service
+    dockerfilePath: ui-service/Dockerfile
+    dockerContext: ui-service
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        fromService:
+          name: memories-backend
+          type: web
+          property: host
