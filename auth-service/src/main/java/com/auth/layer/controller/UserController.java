@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.auth.layer.DTOs.request.UpdateUserRequest;
 import com.auth.layer.DTOs.response.ApiResponse;
 import com.auth.layer.DTOs.response.UserResponse;
+import com.auth.layer.service.ServiceDAO.UserServiceDAO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -30,13 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceDAO userServiceDAO;
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID", description = "Retrieves user information by user ID")
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable UUID id) {
         log.info("Fetching user by ID: {}", id);
-        UserResponse userResponse = userService.getUserById(id);
+        UserResponse userResponse = userServiceDAO.getUserById(id);
         return ResponseEntity.ok(ApiResponse.success(userResponse));
     }
 
@@ -50,7 +51,7 @@ public class UserController {
     @Operation(summary = "Get current user", description = "Retrieves information of the currently authenticated user")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
         log.info("Fetching current authenticated user");
-        UserResponse userResponse = userService.getCurrentUser();
+        UserResponse userResponse = userServiceDAO.getCurrentUser();
         return ResponseEntity.ok(ApiResponse.success(userResponse));
     }
 
@@ -60,7 +61,7 @@ public class UserController {
             @PathVariable UUID id,
             @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         log.info("Updating user with ID: {}", id);
-        UserResponse userResponse = userService.updateUser(id, updateUserRequest);
+        UserResponse userResponse = userServiceDAO.updateUser(id, updateUserRequest);
         return ResponseEntity.ok(ApiResponse.success(userResponse));
     }
 }

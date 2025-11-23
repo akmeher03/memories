@@ -31,6 +31,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_SHOW_SQL=true
       - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - RAG_SERVICE_URL=http://rag-service:8000  # Python RAG service URL
     depends_on:
       database:
         condition: service_healthy    # Wait for DB to be actually ready
