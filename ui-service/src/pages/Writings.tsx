@@ -1,7 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { authService } from '../services/auth.service'
-import { memoryService } from '../services/writings.service'
+import { ragService } from '../services/rag.service'
 import type { ApiError } from '../models/auth.types'
 
 function Dashboard() {
@@ -35,13 +35,13 @@ function Dashboard() {
     setErrorMessage('')
 
     try {
-      // Call API to save memory
-      const response = await memoryService.createMemory({ 
-        title: title.trim() || undefined, 
-        content: memory.trim() 
+      // Store memory in RAG system
+      const ragResponse = await ragService.storeMemory({
+        title: title.trim() || 'Untitled Memory',
+        content: memory.trim()
       })
       
-      if (response.success) {
+      if (ragResponse.success) {
         setSuccessMessage('Memory saved successfully! ✨')
         setTitle('')
         setMemory('')
@@ -49,7 +49,7 @@ function Dashboard() {
         // Clear success message after 3 seconds
         setTimeout(() => setSuccessMessage(''), 3000)
       } else {
-        setErrorMessage(response.message || 'Failed to save memory')
+        setErrorMessage(ragResponse.message || 'Failed to save memory')
       }
     } catch (error: any) {
       const apiErr = error as ApiError

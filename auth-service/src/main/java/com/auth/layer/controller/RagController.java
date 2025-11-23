@@ -36,13 +36,13 @@ public class RagController {
     @PostMapping("/store")
     @Operation(
         summary = "Store information in RAG",
-        description = "Store a document (title + content) in the RAG service for future retrieval. " +
+        description = "Store a information (title + content) in the RAG service for future retrieval. " +
                      "Requires authentication and email in request must match authenticated user's email."
     )
     public ResponseEntity<ApiResponse<RagStoreResponse>> storeDocument(
             @Valid @RequestBody StoreInformationRequest request) {
 
-        log.info("Store document request received - userId: {}, email: {}, title: {}",
+        log.info("Store information request received - userId: {}, email: {}, title: {}",
                 request.getUserId(), request.getEmail(), request.getTitle());
 
         // Get authenticated user's email from SecurityContext (already validated by JWT filter)
@@ -55,9 +55,9 @@ public class RagController {
         // Forward request to RAG service
         RagStoreResponse ragResponse = ragServiceDAO.storeInformation(request);
 
-        log.info("Document stored successfully for userId: {}", request.getUserId());
+        log.info("Information stored successfully for userId: {}", request.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Document stored successfully in RAG service", ragResponse));
+                .body(ApiResponse.success("Information stored successfully in RAG service", ragResponse));
     }
 
     /**

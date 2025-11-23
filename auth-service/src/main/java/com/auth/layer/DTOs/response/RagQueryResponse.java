@@ -9,15 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RagQueryResponse {
-    private List<RagDocument> results;
-    private int total;
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RagDocument {
-        private String title;
-        private String content;
-        private Double score;
-    }
+    private String answer;
+    private Double score;
 }

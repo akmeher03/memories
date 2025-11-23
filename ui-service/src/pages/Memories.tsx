@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authService } from '../services/auth.service'
+import { ragService } from '../services/rag.service'
 
 interface Message {
   id: string
@@ -56,38 +57,42 @@ const Memories: React.FC = () => {
     }
 
     setMessages(prev => [...prev, userMessage])
+    const queryText = inputMessage.trim()
     setInputMessage('')
     setIsLoading(true)
 
     try {
-      // TODO: Replace with actual API call to your backend
-      // const response = await fetch('/api/memories/chat', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-      //   },
-      //   body: JSON.stringify({ message: inputMessage.trim() })
-      // })
-      // const data = await response.json()
-
-      // Simulated response for now
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Call RAG query API
+      const response = await ragService.queryMemories(queryText)
       
+      let assistantContent = ''
+      
+      if (response.success && response.data?.answer) {
+        assistantContent = response.data.answer
+        
+        // Optionally include score information if available
+        if (response.data.score !== undefined) {
+          const scorePercentage = (response.data.score * 100).toFixed(1)
+          assistantContent += `\n\n_Confidence: ${scorePercentage}%_`
+        }
+      } else {
+        assistantContent = response.message || 'I couldn\'t find any relevant memories. Please try rephrasing your question.'
+      }
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'This is a placeholder response. Your backend should process the question and search through your memories to provide relevant answers.',
+        content: assistantContent,
         timestamp: new Date()
       }
 
       setMessages(prev => [...prev, assistantMessage])
-    } catch (error) {
-      console.error('Error sending message:', error)
+    } catch (error: any) {
+      console.error('Error querying memories:', error)
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: error.message || 'Sorry, I encountered an error while searching your memories. Please try again.',
         timestamp: new Date()
       }
       setMessages(prev => [...prev, errorMessage])
