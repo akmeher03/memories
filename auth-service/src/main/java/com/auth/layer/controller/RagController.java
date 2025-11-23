@@ -6,7 +6,6 @@ import com.auth.layer.DTOs.request.StoreInformationRequest;
 import com.auth.layer.DTOs.response.ApiResponse;
 import com.auth.layer.DTOs.response.RagQueryResponse;
 import com.auth.layer.DTOs.response.RagStoreResponse;
-import com.auth.layer.service.RagService;
 import com.auth.layer.service.ServiceDAO.RagServiceDAO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -85,8 +84,8 @@ public class RagController {
         // Forward request to RAG service
         RagQueryResponse ragResponse = ragServiceDAO.queryRag(request);
 
-        log.info("Query completed successfully for userId: {} - Results: {}",
-                request.getUserId(), ragResponse.getTotal());
+        log.info("Query completed successfully for userId: {} - Score: {}",
+                request.getUserId(), ragResponse.getScore());
         return ResponseEntity.ok(
                 ApiResponse.success("Query completed successfully", ragResponse)
         );

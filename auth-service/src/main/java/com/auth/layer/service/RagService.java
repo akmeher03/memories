@@ -117,8 +117,8 @@ public class RagService implements RagServiceDAO {
                 RagQueryResponse.class
             );
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                log.info("Query completed successfully - Total results: {}", 
-                        response.getBody().getTotal());
+                log.info("Query completed successfully - Answer score: {}",
+                        response.getBody().getScore());
                 return response.getBody();
             } else {
                 throw new RagServiceException("RAG service returned empty response");
