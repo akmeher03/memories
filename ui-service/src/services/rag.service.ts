@@ -17,7 +17,7 @@ class RagService {
    * @returns Object with userId and email
    */
   private getUserInfo(): { userId: string; email: string } {
-    const userId = localStorage.getItem('userId') || ''
+    let userId = ''
     const currentUser = localStorage.getItem('currentUser')
     let email = ''
     
@@ -25,6 +25,7 @@ class RagService {
       try {
         const user = JSON.parse(currentUser)
         email = user.email || ''
+        userId = user.id || ''
       } catch (error) {
         console.error('Error parsing currentUser:', error)
       }
