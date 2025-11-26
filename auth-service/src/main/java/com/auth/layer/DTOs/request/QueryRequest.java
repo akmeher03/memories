@@ -7,13 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class QueryRequest {
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private UUID userId;
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
